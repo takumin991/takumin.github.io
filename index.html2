@@ -3,9 +3,1200 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>takumiのwebページ</title>
-  </head>
+    <link href="style.css" rel="stylesheet">
+    <title>takuminのwebページ</title>
+
+<style>
+
+/* ==============================
+   基本設定
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    background: #020617;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+
+/* ==============================
+   背景画像
+================================ */
+
+.background-image {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-image:
+        url("a_wide_abstract_sci_fi_digital_background_scene.png");
+
+    background-size: cover;
+    background-position: center;
+
+    z-index: -5;
+
+    transform: scale(1.05);
+
+    filter:
+        brightness(0.65)
+        saturate(1.2);
+
+    animation: backgroundMove 15s ease-in-out infinite alternate;
+}
+
+
+/* 背景画像をゆっくり動かす */
+
+@keyframes backgroundMove {
+
+    0% {
+        transform: scale(1.05) translate3d(-1%, -1%, 0);
+    }
+
+    50% {
+        transform: scale(1.1) translate3d(1%, 1%, 0);
+    }
+
+    100% {
+        transform: scale(1.05) translate3d(-1%, 1%, 0);
+    }
+}
+
+
+/* ==============================
+   背景の暗いオーバーレイ
+================================ */
+
+.overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 0%,
+            rgba(2, 6, 23, 0.15) 40%,
+            rgba(2, 6, 23, 0.65) 100%
+        );
+
+    z-index: -4;
+
+    pointer-events: none;
+}
+
+
+/* ==============================
+   Canvas
+================================ */
+
+#canvas {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -3;
+
+    pointer-events: none;
+}
+
+
+/* ==============================
+   マウスの光
+================================ */
+
+#mouseLight {
+
+    position: fixed;
+
+    width: 400px;
+    height: 400px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: -2;
+
+    transform: translate(-50%, -50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 234, 255, 0.13) 0%,
+            rgba(0, 100, 255, 0.06) 30%,
+            transparent 70%
+        );
+
+    filter: blur(10px);
+
+    transition:
+        width 0.3s,
+        height 0.3s;
+}
+
+
+/* ==============================
+   波紋
+================================ */
+
+.ripple {
+
+    position: fixed;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(0, 234, 255, 0.8);
+
+    pointer-events: none;
+
+    z-index: -1;
+
+    animation: rippleAnimation 1.2s ease-out forwards;
+}
+
+
+@keyframes rippleAnimation {
+
+    0% {
+        width: 10px;
+        height: 10px;
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+
+    100% {
+        width: 500px;
+        height: 500px;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+    }
+}
+
+
+/* ==============================
+   ページの中身
+================================ */
+
+.content {
+
+    position: relative;
+
+    z-index: 10;
+
+    min-height: 200vh;
+
+    /*
+       ここに後から
+       Webページの内容を追加できます
+    */
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ==================================
+     背景画像
+================================== -->
+
+<div class="background-image"></div>
+
+
+<!-- ==================================
+     暗いフィルター
+================================== -->
+
+<div class="overlay"></div>
+
+
+<!-- ==================================
+     JavaScript Canvas
+================================== -->
+
+<canvas id="canvas"></canvas>
+
+
+<!-- ==================================
+     マウスの光
+================================== -->
+
+<div id="mouseLight"></div>
+
+
+<!-- ==================================
+     ページの中身
+================================== -->
+
+<div class="content">
+
+    <!--
+        ここに後から
+
+        ・タイトル
+        ・プロフィール
+        ・ボタン
+        ・カード
+        ・画像
+        ・文章
+
+        などを追加できます。
+    -->
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   Canvasの準備
+===================================================== */
+
+const canvas = document.getElementById("canvas");
+
+const ctx = canvas.getContext("2d");
+
+
+/* =====================================================
+   Canvasサイズ
+===================================================== */
+
+let width;
+let height;
+
+function resizeCanvas() {
+
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+/* =====================================================
+   マウス情報
+===================================================== */
+
+const mouse = {
+
+    x: null,
+    y: null,
+
+    radius: 150
+
+};
+
+
+window.addEventListener("mousemove", (event) => {
+
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+
+});
+
+
+/* =====================================================
+   マウスが画面から離れた
+===================================================== */
+
+window.addEventListener("mouseout", () => {
+
+    mouse.x = null;
+    mouse.y = null;
+
+});
+
+
+/* =====================================================
+   マウスライト
+===================================================== */
+
+const mouseLight =
+    document.getElementById("mouseLight");
+
+
+window.addEventListener("mousemove", (event) => {
+
+    mouseLight.style.left =
+        event.clientX + "px";
+
+    mouseLight.style.top =
+        event.clientY + "px";
+
+});
+
+
+/* =====================================================
+   パーティクル
+===================================================== */
+
+let particles = [];
+
+
+/* パーティクル数 */
+
+let particleCount = 180;
+
+
+/* =====================================================
+   Particleクラス
+===================================================== */
+
+class Particle {
+
+    constructor() {
+
+        this.x =
+            Math.random() * width;
+
+        this.y =
+            Math.random() * height;
+
+
+        /*
+           ランダムな速度
+        */
+
+        this.vx =
+            (Math.random() - 0.5) * 0.5;
+
+        this.vy =
+            (Math.random() - 0.5) * 0.5;
+
+
+        /*
+           大きさ
+        */
+
+        this.size =
+            Math.random() * 2 + 0.5;
+
+
+        /*
+           明るさ
+        */
+
+        this.alpha =
+            Math.random() * 0.8 + 0.2;
+
+
+        /*
+           点滅用
+        */
+
+        this.twinkle =
+            Math.random() * 0.03 + 0.01;
+
+
+        this.twinkleDirection =
+            Math.random() > 0.5 ? 1 : -1;
+
+
+        /*
+           色
+        */
+
+        const colors = [
+
+            "0,234,255",
+            "80,140,255",
+            "160,100,255",
+            "255,100,240",
+            "255,255,255"
+
+        ];
+
+        this.color =
+            colors[
+                Math.floor(
+                    Math.random() * colors.length
+                )
+            ];
+
+    }
+
+
+    /* ==========================================
+       パーティクルを更新
+    ========================================== */
+
+    update() {
+
+        /*
+           通常移動
+        */
+
+        this.x += this.vx;
+
+        this.y += this.vy;
+
+
+        /*
+           画面端で反射
+        */
+
+        if (this.x < 0 || this.x > width) {
+
+            this.vx *= -1;
+
+        }
+
+
+        if (this.y < 0 || this.y > height) {
+
+            this.vy *= -1;
+
+        }
+
+
+        /*
+           マウスとの距離
+        */
+
+        if (
+            mouse.x !== null &&
+            mouse.y !== null
+        ) {
+
+            const dx =
+                this.x - mouse.x;
+
+            const dy =
+                this.y - mouse.y;
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            /*
+               マウスの近くなら
+               少し逃げる
+            */
+
+            if (distance < mouse.radius) {
+
+                const force =
+                    (mouse.radius - distance)
+                    / mouse.radius;
+
+                const angle =
+                    Math.atan2(dy, dx);
+
+
+                this.x +=
+                    Math.cos(angle)
+                    * force
+                    * 1.5;
+
+
+                this.y +=
+                    Math.sin(angle)
+                    * force
+                    * 1.5;
+
+            }
+
+        }
+
+
+        /*
+           点滅
+        */
+
+        this.alpha +=
+            this.twinkle
+            * this.twinkleDirection;
+
+
+        if (
+            this.alpha >= 1 ||
+            this.alpha <= 0.15
+        ) {
+
+            this.twinkleDirection *= -1;
+
+        }
+
+    }
+
+
+    /* ==========================================
+       パーティクルを描画
+    ========================================== */
+
+    draw() {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.size,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+            `rgba(
+                ${this.color},
+                ${this.alpha}
+            )`;
+
+
+        ctx.shadowBlur = 10;
+
+        ctx.shadowColor =
+            `rgba(
+                ${this.color},
+                ${this.alpha}
+            )`;
+
+
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+    }
+
+}
+
+
+/* =====================================================
+   パーティクルを作成
+===================================================== */
+
+function createParticles() {
+
+    particles = [];
+
+    particleCount =
+        Math.min(
+            220,
+            Math.floor(
+                window.innerWidth *
+                window.innerHeight /
+                7000
+            )
+        );
+
+
+    for (
+        let i = 0;
+        i < particleCount;
+        i++
+    ) {
+
+        particles.push(
+            new Particle()
+        );
+
+    }
+
+}
+
+
+createParticles();
+
+
+window.addEventListener(
+    "resize",
+    createParticles
+);
+
+
+/* =====================================================
+   パーティクル同士を線でつなぐ
+===================================================== */
+
+function connectParticles() {
+
+    const maxDistance = 130;
+
+
+    for (
+        let i = 0;
+        i < particles.length;
+        i++
+    ) {
+
+        for (
+            let j = i + 1;
+            j < particles.length;
+            j++
+        ) {
+
+            const dx =
+                particles[i].x -
+                particles[j].x;
+
+
+            const dy =
+                particles[i].y -
+                particles[j].y;
+
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            if (
+                distance <
+                maxDistance
+            ) {
+
+                const opacity =
+                    1 -
+                    distance /
+                    maxDistance;
+
+
+                ctx.beginPath();
+
+
+                ctx.moveTo(
+                    particles[i].x,
+                    particles[i].y
+                );
+
+
+                ctx.lineTo(
+                    particles[j].x,
+                    particles[j].y
+                );
+
+
+                ctx.strokeStyle =
+                    `rgba(
+                        0,
+                        200,
+                        255,
+                        ${opacity * 0.25}
+                    )`;
+
+
+                ctx.lineWidth = 1;
+
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   マウスとパーティクルをつなぐ
+===================================================== */
+
+function connectMouse() {
+
+    if (
+        mouse.x === null ||
+        mouse.y === null
+    ) {
+
+        return;
+
+    }
+
+
+    const maxDistance = 180;
+
+
+    particles.forEach((particle) => {
+
+        const dx =
+            particle.x -
+            mouse.x;
+
+
+        const dy =
+            particle.y -
+            mouse.y;
+
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+
+        if (
+            distance <
+            maxDistance
+        ) {
+
+            const opacity =
+                1 -
+                distance /
+                maxDistance;
+
+
+            ctx.beginPath();
+
+
+            ctx.moveTo(
+                particle.x,
+                particle.y
+            );
+
+
+            ctx.lineTo(
+                mouse.x,
+                mouse.y
+            );
+
+
+            ctx.strokeStyle =
+                `rgba(
+                    0,
+                    234,
+                    255,
+                    ${opacity * 0.6}
+                )`;
+
+
+            ctx.lineWidth = 1.5;
+
+
+            ctx.stroke();
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   大きな光のオーブ
+===================================================== */
+
+let orbs = [];
+
+
+class Orb {
+
+    constructor() {
+
+        this.x =
+            Math.random() * width;
+
+        this.y =
+            Math.random() * height;
+
+        this.radius =
+            Math.random() * 150 + 100;
+
+        this.vx =
+            (Math.random() - 0.5)
+            * 0.2;
+
+        this.vy =
+            (Math.random() - 0.5)
+            * 0.2;
+
+        this.color =
+            Math.random() > 0.5
+            ? "0,150,255"
+            : "180,50,255";
+
+    }
+
+
+    update() {
+
+        this.x += this.vx;
+
+        this.y += this.vy;
+
+
+        if (
+            this.x < -200 ||
+            this.x > width + 200
+        ) {
+
+            this.vx *= -1;
+
+        }
+
+
+        if (
+            this.y < -200 ||
+            this.y > height + 200
+        ) {
+
+            this.vy *= -1;
+
+        }
+
+    }
+
+
+    draw() {
+
+        const gradient =
+            ctx.createRadialGradient(
+                this.x,
+                this.y,
+                0,
+                this.x,
+                this.y,
+                this.radius
+            );
+
+
+        gradient.addColorStop(
+            0,
+            `rgba(${this.color},0.08)`
+        );
+
+
+        gradient.addColorStop(
+            1,
+            `rgba(${this.color},0)`
+        );
+
+
+        ctx.beginPath();
+
+        ctx.fillStyle = gradient;
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    }
+
+}
+
+
+/* =====================================================
+   オーブ作成
+===================================================== */
+
+for (let i = 0; i < 5; i++) {
+
+    orbs.push(
+        new Orb()
+    );
+
+}
+
+
+/* =====================================================
+   クリック時の波紋
+===================================================== */
+
+window.addEventListener(
+    "click",
+    (event) => {
+
+        const ripple =
+            document.createElement("div");
+
+
+        ripple.className =
+            "ripple";
+
+
+        ripple.style.left =
+            event.clientX + "px";
+
+
+        ripple.style.top =
+            event.clientY + "px";
+
+
+        document.body.appendChild(
+            ripple
+        );
+
+
+        setTimeout(() => {
+
+            ripple.remove();
+
+        }, 1200);
+
+
+        /*
+           クリック地点から
+           パーティクルを飛ばす
+        */
+
+        particles.forEach(
+            particle => {
+
+                const dx =
+                    particle.x -
+                    event.clientX;
+
+
+                const dy =
+                    particle.y -
+                    event.clientY;
+
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+
+                if (distance < 250) {
+
+                    const force =
+                        (250 - distance)
+                        / 250;
+
+
+                    const angle =
+                        Math.atan2(
+                            dy,
+                            dx
+                        );
+
+
+                    particle.vx +=
+                        Math.cos(angle)
+                        * force
+                        * 2;
+
+
+                    particle.vy +=
+                        Math.sin(angle)
+                        * force
+                        * 2;
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   アニメーション
+===================================================== */
+
+let animationTime = 0;
+
+
+function animate() {
+
+    animationTime += 0.01;
+
+
+    /*
+       Canvasをクリア
+    */
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /*
+       オーブ
+    */
+
+    orbs.forEach(
+        orb => {
+
+            orb.update();
+            orb.draw();
+
+        }
+    );
+
+
+    /*
+       パーティクル
+    */
+
+    particles.forEach(
+        particle => {
+
+            particle.update();
+            particle.draw();
+
+        }
+    );
+
+
+    /*
+       パーティクル同士の線
+    */
+
+    connectParticles();
+
+
+    /*
+       マウスとの線
+    */
+
+    connectMouse();
+
+
+    /*
+       次のフレーム
+    */
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+animate();
+
+
+/* =====================================================
+   スクロールによる背景の移動
+===================================================== */
+
+let scrollY = 0;
+
+
+window.addEventListener(
+    "scroll",
+    () => {
+
+        scrollY =
+            window.scrollY;
+
+    }
+);
+
+
+/*
+   定期的に背景を少し揺らす
+*/
+
+setInterval(() => {
+
+    const background =
+        document.querySelector(
+            ".background-image"
+        );
+
+
+    const moveX =
+        Math.sin(
+            Date.now() / 5000
+        ) * 1.5;
+
+
+    const moveY =
+        Math.cos(
+            Date.now() / 6000
+        ) * 1.5;
+
+
+    background.style.transform =
+        `
+        scale(1.06)
+        translate(
+            ${moveX}%,
+            ${moveY + scrollY * 0.002}%
+        )
+        `;
+
+}, 50);
+
+</script>
+
   <body>
-    <h1>ハンドルネーム</h1>
+    <h1>takumin</h1>
+    
+    <h2>About</h2>
+    <p>
+      ゲームが好きです。<br>
+      いろんなジャンルのゲームをしています。
+    </p>
+
+    <h3>プロフィール</h3>
+    <ul>
+      <li>takumin</li>
+      <li>山口県</li>
+      <li>ゲームをすること</li>
+    </ul>
+
+    <h3>好きなゲーム</h3>
+    <table>
+      <tr>
+        <th>プラットフォーム</th>
+        <td>PS5,Switch</td>
+      </tr>
+      <tr>
+        <th>ジャンル</th>
+        <td>アクションゲーム,RPGなど</td>
+      </tr>
+      <tr>
+        <th>おすすめのゲーム</th>
+        <td> ペルソナシリーズ</td>
+      </tr>
+　　
   </body>
 </html>
