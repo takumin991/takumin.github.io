@@ -1,1 +1,968 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Web</title>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #050816;
+            color: white;
+            overflow-x: hidden;
+            transition: 0.5s;
+        }
+
+        /* --------------------
+           背景パーティクル
+        -------------------- */
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background:
+                radial-gradient(circle at 20% 20%, #163b73 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, #4b155f 0%, transparent 30%),
+                #050816;
+            transition: 0.5s;
+        }
+
+        /* --------------------
+           ナビゲーション
+        -------------------- */
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            background: rgba(5, 8, 22, 0.5);
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #00eaff;
+            letter-spacing: 3px;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #00eaff;
+            text-shadow: 0 0 15px #00eaff;
+        }
+
+        #themeButton {
+            border: 1px solid #00eaff;
+            background: transparent;
+            color: #00eaff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* --------------------
+           ヒーロー
+        -------------------- */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(45px, 8vw, 100px);
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00eaff, #a855f7, #ff4ecd);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px #00eaff);
+            }
+            to {
+                filter: drop-shadow(0 0 25px #a855f7);
+            }
+        }
+
+        #typing {
+            font-size: 25px;
+            min-height: 40px;
+            color: #ccc;
+        }
+
+        .hero-button {
+            margin-top: 35px;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #00eaff, #8b5cf6);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #00eaff;
+        }
+
+        /* --------------------
+           セクション
+        -------------------- */
+
+        section {
+            padding: 120px 8%;
+            min-height: 80vh;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 45px;
+            margin-bottom: 60px;
+            color: #00eaff;
+        }
+
+        /* --------------------
+           カード
+        -------------------- */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            padding: 35px;
+            min-height: 230px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 234, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            transition: transform 0.2s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+        }
+
+        .card:hover {
+            box-shadow:
+                0 0 30px rgba(0, 234, 255, 0.3),
+                inset 0 0 20px rgba(0, 234, 255, 0.05);
+        }
+
+        .card h3 {
+            color: #00eaff;
+            margin-bottom: 15px;
+            font-size: 25px;
+        }
+
+        .card p {
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        /* --------------------
+           カウンター
+        -------------------- */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 30px;
+        }
+
+        .number {
+            font-size: 60px;
+            font-weight: bold;
+            color: #00eaff;
+        }
+
+        .stat p {
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        /* --------------------
+           スクロール出現
+        -------------------- */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: 1s;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --------------------
+           時計
+        -------------------- */
+
+        #clock {
+            text-align: center;
+            font-size: 40px;
+            color: #00eaff;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+        }
+
+        /* --------------------
+           フッター
+        -------------------- */
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #777;
+        }
+
+        /* --------------------
+           ライトモード
+        -------------------- */
+
+        body.light {
+            background: #eef5ff;
+            color: #111;
+        }
+
+        body.light .background {
+            background:
+                radial-gradient(circle at 20% 20%, #c7e9ff, transparent 35%),
+                radial-gradient(circle at 80% 70%, #e6d1ff, transparent 35%),
+                #eef5ff;
+        }
+
+        body.light header {
+            background: rgba(255,255,255,0.65);
+        }
+
+        body.light nav a {
+            color: #222;
+        }
+
+        body.light .card {
+            background: rgba(255,255,255,0.6);
+        }
+
+        body.light .card p {
+            color: #444;
+        }
+
+        /* --------------------
+           レスポンシブ
+        -------------------- */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 15px 20px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 55px;
+            }
+
+            #typing {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- ナビゲーション -->
+    <header>
+        <div class="logo">FUTURE</div>
+
+        <nav>
+            <a href="#home">HOME</a>
+            <a href="#about">ABOUT</a>
+            <a href="#skills">SKILLS</a>
+            <a href="#stats">STATS</a>
+        </nav>
+
+        <button id="themeButton">☀ MODE</button>
+    </header>
+
+
+    <!-- ホーム -->
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <h1>WELCOME</h1>
+
+            <div id="typing"></div>
+
+            <button class="hero-button" onclick="scrollToAbout()">
+                START EXPLORING
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+    <section id="about" class="reveal">
+
+        <h2 class="section-title">ABOUT</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>HTML</h3>
+                <p>
+                    Webページの構造を作ります。
+                    見出し、文章、ボタンなどの要素を組み合わせて
+                    ページの土台を作成します。
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>CSS</h3>
+                <p>
+                    色、レイアウト、アニメーションなどを設定します。
+                    Webページを未来的でスタイリッシュなデザインにします。
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>JavaScript</h3>
+                <p>
+                    Webページに動きを追加します。
+                    今回はアニメーション、パーティクル、時計、
+                    タイピングなどをJavaScriptで実装しています。
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SKILLS -->
+    <section id="skills" class="reveal">
+
+        <h2 class="section-title">SKILLS</h2>
+
+        <div class="cards">
+
+            <div class="card interactive-card">
+                <h3>Animation</h3>
+                <p>
+                    スクロールやマウス操作に反応して、
+                    要素が動くインタラクティブなアニメーション。
+                </p>
+            </div>
+
+            <div class="card interactive-card">
+                <h3>Particle</h3>
+                <p>
+                    CanvasとJavaScriptを使って、
+                    背景に大量のパーティクルを生成しています。
+                </p>
+            </div>
+
+            <div class="card interactive-card">
+                <h3>Interaction</h3>
+                <p>
+                    マウスの動きやクリックなどを検知して、
+                    Webページの表示をリアルタイムに変化させます。
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATS -->
+    <section id="stats" class="reveal">
+
+        <h2 class="section-title">LIVE DATA</h2>
+
+        <div id="clock">00:00:00</div>
+
+        <div class="stats">
+
+            <div class="stat">
+                <div class="number" data-target="100">0</div>
+                <p>HTML</p>
+            </div>
+
+            <div class="stat">
+                <div class="number" data-target="95">0</div>
+                <p>CSS</p>
+            </div>
+
+            <div class="stat">
+                <div class="number" data-target="120">0</div>
+                <p>JavaScript</p>
+            </div>
+
+            <div class="stat">
+                <div class="number" data-target="999">0</div>
+                <p>Creativity</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        JavaScript Interactive Web Page
+    </footer>
+
+
+<script>
+
+/* =====================================================
+   タイピングアニメーション
+===================================================== */
+
+const texts = [
+    "Interactive Web Experience",
+    "Powered by JavaScript",
+    "Create Something Amazing",
+    "Welcome to the Future"
+];
+
+let textIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+const typing = document.getElementById("typing");
+
+function typeText() {
+
+    const currentText = texts[textIndex];
+
+    if (!deleting) {
+
+        typing.textContent =
+            currentText.substring(0, charIndex + 1);
+
+        charIndex++;
+
+        if (charIndex === currentText.length) {
+            deleting = true;
+
+            setTimeout(typeText, 1500);
+            return;
+        }
+
+    } else {
+
+        typing.textContent =
+            currentText.substring(0, charIndex - 1);
+
+        charIndex--;
+
+        if (charIndex === 0) {
+
+            deleting = false;
+            textIndex++;
+
+            if (textIndex >= texts.length) {
+                textIndex = 0;
+            }
+        }
+    }
+
+    setTimeout(typeText, deleting ? 40 : 90);
+}
+
+typeText();
+
+
+/* =====================================================
+   リアルタイム時計
+===================================================== */
+
+function updateClock() {
+
+    const now = new Date();
+
+    const h = String(now.getHours()).padStart(2, "0");
+    const m = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+
+    document.getElementById("clock").textContent =
+        `${h}:${m}:${s}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+
+/* =====================================================
+   スクロールアニメーション
+===================================================== */
+
+const reveals = document.querySelectorAll(".reveal");
+
+function revealOnScroll() {
+
+    reveals.forEach(element => {
+
+        const windowHeight = window.innerHeight;
+
+        const elementTop =
+            element.getBoundingClientRect().top;
+
+        if (elementTop < windowHeight - 100) {
+            element.classList.add("active");
+        }
+    });
+}
+
+window.addEventListener("scroll", revealOnScroll);
+
+revealOnScroll();
+
+
+/* =====================================================
+   カードの3Dマウスアニメーション
+===================================================== */
+
+const cards =
+    document.querySelectorAll(".interactive-card");
+
+cards.forEach(card => {
+
+    card.addEventListener("mousemove", event => {
+
+        const rect = card.getBoundingClientRect();
+
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX =
+            (y - centerY) / 10;
+
+        const rotateY =
+            (centerX - x) / 10;
+
+        card.style.transform =
+            `perspective(800px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             scale(1.05)`;
+    });
+
+    card.addEventListener("mouseleave", () => {
+
+        card.style.transform =
+            "perspective(800px) rotateX(0) rotateY(0) scale(1)";
+    });
+
+});
+
+
+/* =====================================================
+   パーティクルシステム
+===================================================== */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas() {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+resizeCanvas();
+
+
+class Particle {
+
+    constructor() {
+
+        this.x =
+            Math.random() * canvas.width;
+
+        this.y =
+            Math.random() * canvas.height;
+
+        this.size =
+            Math.random() * 2 + 1;
+
+        this.speedX =
+            (Math.random() - 0.5) * 0.5;
+
+        this.speedY =
+            (Math.random() - 0.5) * 0.5;
+
+        this.alpha =
+            Math.random();
+    }
+
+    update() {
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) {
+            this.speedX *= -1;
+        }
+
+        if (this.y < 0 || this.y > canvas.height) {
+            this.speedY *= -1;
+        }
+    }
+
+    draw() {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            `rgba(0,234,255,${this.alpha})`;
+
+        ctx.fill();
+    }
+}
+
+
+function createParticles() {
+
+    particles = [];
+
+    const count =
+        Math.min(150, Math.floor(
+            window.innerWidth / 8
+        ));
+
+    for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+    }
+}
+
+createParticles();
+
+window.addEventListener("resize", createParticles);
+
+
+function animateParticles() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    particles.forEach(particle => {
+
+        particle.update();
+        particle.draw();
+
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+
+/* =====================================================
+   パーティクル同士を線でつなぐ
+===================================================== */
+
+function connectParticles() {
+
+    for (let i = 0; i < particles.length; i++) {
+
+        for (let j = i + 1; j < particles.length; j++) {
+
+            const dx =
+                particles[i].x - particles[j].x;
+
+            const dy =
+                particles[i].y - particles[j].y;
+
+            const distance =
+                Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 100) {
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    particles[i].x,
+                    particles[i].y
+                );
+
+                ctx.lineTo(
+                    particles[j].x,
+                    particles[j].y
+                );
+
+                ctx.strokeStyle =
+                    `rgba(0,234,255,
+                    ${1 - distance / 100})`;
+
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   マウス追従エフェクト
+===================================================== */
+
+let mouseX = 0;
+let mouseY = 0;
+
+window.addEventListener("mousemove", event => {
+
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    particles.forEach(particle => {
+
+        const dx = particle.x - mouseX;
+        const dy = particle.y - mouseY;
+
+        const distance =
+            Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 100) {
+
+            particle.x += dx / distance;
+            particle.y += dy / distance;
+        }
+    });
+});
+
+
+/* =====================================================
+   カウンターアニメーション
+===================================================== */
+
+const numbers =
+    document.querySelectorAll(".number");
+
+let counterStarted = false;
+
+function startCounter() {
+
+    if (counterStarted) return;
+
+    const stats =
+        document.getElementById("stats");
+
+    const rect =
+        stats.getBoundingClientRect();
+
+    if (rect.top < window.innerHeight - 100) {
+
+        counterStarted = true;
+
+        numbers.forEach(number => {
+
+            const target =
+                Number(number.dataset.target);
+
+            let current = 0;
+
+            const speed =
+                target / 100;
+
+            function updateNumber() {
+
+                current += speed;
+
+                if (current < target) {
+
+                    number.textContent =
+                        Math.floor(current);
+
+                    requestAnimationFrame(
+                        updateNumber
+                    );
+
+                } else {
+
+                    number.textContent =
+                        target;
+                }
+            }
+
+            updateNumber();
+        });
+    }
+}
+
+window.addEventListener(
+    "scroll",
+    startCounter
+);
+
+
+/* =====================================================
+   ABOUTへスクロール
+===================================================== */
+
+function scrollToAbout() {
+
+    document.getElementById("about")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
+/* =====================================================
+   ダーク / ライトモード
+===================================================== */
+
+const themeButton =
+    document.getElementById("themeButton");
+
+themeButton.addEventListener("click", () => {
+
+    document.body.classList.toggle("light");
+
+    if (document.body.classList.contains("light")) {
+
+        themeButton.textContent = "🌙 DARK";
+
+    } else {
+
+        themeButton.textContent = "☀ MODE";
+    }
+});
+
+
+/* =====================================================
+   ボタンのクリックエフェクト
+===================================================== */
+
+document.querySelectorAll("button")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            button.animate(
+                [
+                    {
+                        transform: "scale(1)"
+                    },
+                    {
+                        transform: "scale(0.9)"
+                    },
+                    {
+                        transform: "scale(1)"
+                    }
+                ],
+                {
+                    duration: 250
+                }
+            );
+        });
+    });
+
+
+/* =====================================================
+   パーティクル描画に接続線を追加
+===================================================== */
+
+function particleLoop() {
+
+    connectParticles();
+
+    requestAnimationFrame(particleLoop);
+}
+
+particleLoop();
+
+</script>
+
+</body>
+</html>
