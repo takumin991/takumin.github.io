@@ -1,77 +1,101 @@
-/* --------------------
-        全体
--------------------- */
-
-:root {
-  --theme-color: #00a0a0;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-}
-
+/* ページ全体 */
 body {
   margin: 0;
   padding: 30px;
-  color: #333;
+
+  background: #050816;
+  color: white;
+
+  font-family: Arial, sans-serif;
 }
 
-/* --------------------
-        見出し
--------------------- */
 
-h1, h2, h3 {
-  color: var(--theme-color);
-  border-bottom: dashed 0.1em var(--theme-color);
+/* JavaScriptで作る背景 */
+canvas {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: -1;
 }
 
-/* --------------------
-        リンク
--------------------- */
 
-a {
-  color: var(--theme-color);
-  text-decoration: none;
+/* タイトル */
+h1 {
+  color: #00eaff;
+
+  font-size: 50px;
+
+  text-shadow:
+    0 0 10px #00eaff;
+
+  transition: 0.3s;
 }
 
-/* --------------------
-        リスト
--------------------- */
 
-ul {
-  list-style: none;
-}
-li:before {
-  content: "★";
-  color: var(--theme-color);
+/* タイトルにマウスを乗せたとき */
+h1:hover {
+  transform: scale(1.05);
+
+  text-shadow:
+    0 0 25px #00eaff;
 }
 
-/* --------------------
-          表
--------------------- */
 
+/* 見出し */
+h2,
+h3 {
+  color: #8bdcff;
+
+  transition: 0.3s;
+}
+
+
+/* 見出しにマウスを乗せたとき */
+h2:hover,
+h3:hover {
+  color: #00eaff;
+
+  transform: translateX(10px);
+}
+
+
+/* 文章 */
+p {
+  line-height: 1.8;
+}
+
+
+/* リスト */
+li {
+  margin: 10px;
+}
+
+
+/* 表 */
 table {
-  border-spacing: 0;
   border-collapse: collapse;
-  border: solid 1px #f0f0f0;
-  min-width: 70%;
+
+  margin-top: 20px;
+
+  background: rgba(0, 0, 0, 0.4);
 }
-tr {
-  background-color: #fff;
+
+
+/* 表のセル */
+th,
+td {
+  border: 1px solid #00eaff;
+
+  padding: 15px;
 }
-tr:nth-child(2n) {
-  background-color: #f9f9f9;
-}
+
+
+/* 表の見出し */
 th {
-  background: var(--theme-color);
-  color: #fff;
-}
-th, td {
-  border: solid 1px #f0f0f0;
-  padding: 0.5rem;
+  color: #00eaff;
 }
